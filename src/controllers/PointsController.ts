@@ -128,6 +128,22 @@ class PointsController {
       ...point,
     });
   }
+
+  async delete(request: Request, response: Response) {
+    const { id } = request.params;
+
+    const trx = await knex.transaction();
+
+    const point_id = Number(id);
+
+    await trx('point_items').where('point_id', '=', point_id).del();
+
+    await trx('points').where('id', '=', point_id).del();
+
+    await trx.commit();
+
+    return response.json({ result: 'ok' });
+  }
 }
 
 export default PointsController;
