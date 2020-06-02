@@ -80,6 +80,54 @@ class PointsController {
       ...point,
     });
   }
+
+  async update(request: Request, response: Response) {
+    const {
+      name,
+      email,
+      whatsapp,
+      latitude,
+      longitude,
+      city,
+      uf,
+    } = request.body;
+
+    const { id } = request.params;
+
+    const trx = await knex.transaction();
+
+    const point = {
+      image:
+        'https://images.unsplash.com/photo-1580913428735-bd3c269d6a82?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60',
+      name,
+      email,
+      whatsapp,
+      latitude,
+      longitude,
+      city,
+      uf,
+    };
+
+    const point_id = Number(id);
+
+    await trx('points').where('id', '=', point_id).update({
+      image: point.image,
+      name: point.name,
+      email: point.email,
+      whatsapp: point.whatsapp,
+      latitude: point.latitude,
+      longitude: point.longitude,
+      city: point.city,
+      uf: point.uf,
+    });
+
+    await trx.commit();
+
+    return response.json({
+      id: point_id,
+      ...point,
+    });
+  }
 }
 
 export default PointsController;
